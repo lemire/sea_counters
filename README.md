@@ -110,13 +110,13 @@ the version you want to use.
 ```cmake
 FetchContent_Declare(
   counters
-  GIT_REPOSITORY https://github.com/lemire/counters.git
+  GIT_REPOSITORY https://github.com/lemire/sea_counters.git
   GIT_TAG vx.y.z
 )
 
-FetchContent_MakeAvailable(counters)
+FetchContent_MakeAvailable(sea_counters)
 
-target_link_libraries(yourtarget PRIVATE counters::counters)
+target_link_libraries(yourtarget PRIVATE sea_counters::sea_counters)
 ```
 
 If you use CPM, it is somewhat simpler:
@@ -124,8 +124,8 @@ If you use CPM, it is somewhat simpler:
 ```cmake
 include(cmake/CPM.cmake)
 
-CPMAddPackage("gh:lemire/counters#vx.y.z")
-target_link_libraries(yourtarget PRIVATE counters::counters)
+CPMAddPackage("gh:lemire/sea_counters#vx.y.z")
+target_link_libraries(yourtarget PRIVATE sea_counters::sea_counters)
 ```
 
 ## Citing This Work
@@ -139,7 +139,7 @@ Replace fields (year, author, url, commit) as appropriate.
   title = {{The Sea Counters library: Lightweight performance counters for Linux and macOS (Apple Silicon)}},
   year = {2026},
   howpublished = {GitHub repository},
-  note = {https://github.com/lemire/counters}
+  note = {https://github.com/lemire/sea_counters}
 }
 ```
 
