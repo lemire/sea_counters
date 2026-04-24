@@ -18,7 +18,8 @@ enum {
   COUNTERS_CPU_CYCLES = 0,
   COUNTERS_INSTRUCTIONS = 1,
   COUNTERS_BRANCH = 2,
-  COUNTERS_BRANCH_MISSES = 3
+  COUNTERS_BRANCH_MISSES = 3,
+  COUNTERS_CACHE_MISSES = 4
 };
 
 typedef struct {
@@ -50,6 +51,9 @@ static inline double counters_event_count_branches(const counters_event_count *c
 }
 static inline double counters_event_count_branch_misses(const counters_event_count *c) {
   return (double)c->event_counts[COUNTERS_BRANCH_MISSES];
+}
+static inline double counters_event_count_cache_misses(const counters_event_count *c) {
+  return (double)c->event_counts[COUNTERS_CACHE_MISSES];
 }
 
 static inline void counters_event_count_add(counters_event_count *dst,
@@ -109,6 +113,9 @@ static inline double counters_event_aggregate_branches(const counters_event_aggr
 static inline double counters_event_aggregate_branch_misses(const counters_event_aggregate *a) {
   return counters_event_count_branch_misses(&a->total) / a->iterations;
 }
+static inline double counters_event_aggregate_cache_misses(const counters_event_aggregate *a) {
+  return counters_event_count_cache_misses(&a->total) / a->iterations;
+}
 static inline double counters_event_aggregate_fastest_elapsed_ns(const counters_event_aggregate *a) {
   return counters_event_count_elapsed_ns(&a->best);
 }
@@ -123,6 +130,9 @@ static inline double counters_event_aggregate_fastest_branches(const counters_ev
 }
 static inline double counters_event_aggregate_fastest_branch_misses(const counters_event_aggregate *a) {
   return counters_event_count_branch_misses(&a->best);
+}
+static inline double counters_event_aggregate_fastest_cache_misses(const counters_event_aggregate *a) {
+  return counters_event_count_cache_misses(&a->best);
 }
 static inline int counters_event_aggregate_iteration_count(const counters_event_aggregate *a) {
   return a->iterations;
@@ -150,6 +160,7 @@ static inline void counters_event_collector_init(counters_event_collector *c) {
       PERF_COUNT_HW_INSTRUCTIONS,
       PERF_COUNT_HW_BRANCH_INSTRUCTIONS,
       PERF_COUNT_HW_BRANCH_MISSES,
+      PERF_COUNT_HW_CACHE_MISSES,
   };
   counters_linux_events_init(&c->linux_events, configs,
                              sizeof(configs) / sizeof(configs[0]));
@@ -204,6 +215,7 @@ static inline void counters_event_collector_end(counters_event_collector *c,
   c->count.event_counts[1] = (unsigned long long)c->diff.instructions;
   c->count.event_counts[2] = (unsigned long long)c->diff.branches;
   c->count.event_counts[3] = (unsigned long long)c->diff.missed_branches;
+  c->count.event_counts[4] = (unsigned long long)c->diff.cache_misses;
 #endif
   double ns = (double)(end_clock.tv_sec - c->start_clock.tv_sec) * 1e9 +
               (double)(end_clock.tv_nsec - c->start_clock.tv_nsec);

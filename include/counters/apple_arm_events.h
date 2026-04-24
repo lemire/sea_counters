@@ -35,10 +35,11 @@ typedef struct {
   double branches;
   double missed_branches;
   double instructions;
+  double cache_misses;
 } counters_performance_counters;
 
 static inline counters_performance_counters counters_pc_zero(void) {
-  counters_performance_counters r = {0.0, 0.0, 0.0, 0.0};
+  counters_performance_counters r = {0.0, 0.0, 0.0, 0.0, 0.0};
   return r;
 }
 
@@ -49,6 +50,7 @@ static inline counters_performance_counters counters_pc_sub(
   r.branches = a.branches - b.branches;
   r.missed_branches = a.missed_branches - b.missed_branches;
   r.instructions = a.instructions - b.instructions;
+  r.cache_misses = a.cache_misses - b.cache_misses;
   return r;
 }
 
@@ -464,6 +466,17 @@ static const counters_event_alias counters_profile_events[] = {
          "BR_MISP_RETIRED.ALL_BRANCHES",
          "BR_INST_RETIRED.MISPRED",
      }},
+    /* Apple Silicon has no off-cluster LLC exposed to kperf: the per-cluster L2
+     * is the last cache level visible here, so we treat L2 data misses as the
+     * LLC-miss signal. */
+    {"cache-misses",
+     {
+         "L2_CACHE_MISS_DATA",
+         "L2_CACHE_MISS",
+         "LLC_MISSES",
+         "LONGEST_LAT_CACHE.MISS",
+         "MEM_LOAD_RETIRED.L3_MISS",
+     }},
 };
 
 static inline kpep_event *counters_get_event(kpep_db *db, const counters_event_alias *alias) {
@@ -609,7 +622,7 @@ static inline counters_performance_counters counters_apple_events_get(
     counters_apple_events *self) {
   static bool warned = false;
   int ret;
-  counters_performance_counters r = {0.0, 0.0, 0.0, 0.0};
+  counters_performance_counters r = {0.0, 0.0, 0.0, 0.0, 0.0};
   if ((ret = kpc_get_thread_counters(0, KPC_MAX_COUNTERS, self->counters_0))) {
     if (!warned) {
       printf("Failed get thread counters before: %d.\n", ret);
@@ -619,12 +632,14 @@ static inline counters_performance_counters counters_apple_events_get(
     r.branches = 1.0;
     r.missed_branches = 1.0;
     r.instructions = 1.0;
+    r.cache_misses = 1.0;
     return r;
   }
   r.cycles = (double)self->counters_0[self->counter_map[0]];
   r.branches = (double)self->counters_0[self->counter_map[2]];
   r.missed_branches = (double)self->counters_0[self->counter_map[3]];
   r.instructions = (double)self->counters_0[self->counter_map[1]];
+  r.cache_misses = (double)self->counters_0[self->counter_map[4]];
   return r;
 }
 

@@ -1,6 +1,6 @@
 # Sea Counters
 
-This project provides a C library to access hardware performance counters (CPU cycles, instructions, etc.) on different platforms (Linux, macOS/Apple Silicon).
+This project provides a C library to access hardware performance counters (CPU cycles, instructions, branches, branch misses, cache misses) on different platforms (Linux, macOS/Apple Silicon).
 
 ## Main Features
 - Access to hardware counters via native interfaces (perf events on Linux, kpc on macOS/Apple Silicon)
@@ -75,11 +75,15 @@ multiple `counters_event_count` measurements. Its main accessors are:
 - `counters_event_aggregate_instructions(agg)`: mean instructions
 - `counters_event_aggregate_branches(agg)`: mean branches
 - `counters_event_aggregate_branch_misses(agg)`: mean branch misses
+- `counters_event_aggregate_cache_misses(agg)`: mean cache misses (LLC misses on
+  Linux; L2 data misses on Apple Silicon, since no off-cluster LLC is exposed
+  to kperf)
 - `counters_event_aggregate_fastest_elapsed_ns(agg)`: best (minimum) elapsed time
 - `counters_event_aggregate_fastest_cycles(agg)`: best cycles
 - `counters_event_aggregate_fastest_instructions(agg)`: best instructions
 - `counters_event_aggregate_fastest_branches(agg)`: best branches
 - `counters_event_aggregate_fastest_branch_misses(agg)`: best branch misses
+- `counters_event_aggregate_fastest_cache_misses(agg)`: best cache misses
 - `counters_event_aggregate_iteration_count(agg)`: number of iterations
 
 You can use these accessors to analyze performance, for example:
