@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(sear_counters VERSION 2.0.0 LANGUAGES C)
+project(sear_counters VERSION 3.0.0 LANGUAGES C)
 
 option(SEA_COUNTERS_INSTALL "Enable install" ON)
 

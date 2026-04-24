@@ -466,14 +466,17 @@ static const counters_event_alias counters_profile_events[] = {
          "BR_MISP_RETIRED.ALL_BRANCHES",
          "BR_INST_RETIRED.MISPRED",
      }},
-    /* Apple Silicon has no off-cluster LLC exposed to kperf: the per-cluster L2
-     * is the last cache level visible here, so we treat L2 data misses as the
-     * LLC-miss signal. */
+    /* Apple Silicon has no off-cluster LLC exposed to kperf. Older chips
+     * (M1/M2/M3) expose L2_CACHE_MISS_DATA as the last-level-cache miss
+     * signal. M4 drops L2 counters from the kpep database, so we fall back
+     * to L1 data cache load misses — a coarser proxy, but the best signal
+     * the hardware exposes. Intel fallbacks follow for the x86_64 kperfdata
+     * path. */
     {"cache-misses",
      {
          "L2_CACHE_MISS_DATA",
-         "L2_CACHE_MISS",
-         "LLC_MISSES",
+         "L1D_CACHE_MISS_LD",
+         "L1D_CACHE_MISS_LD_NONSPEC",
          "LONGEST_LAT_CACHE.MISS",
          "MEM_LOAD_RETIRED.L3_MISS",
      }},

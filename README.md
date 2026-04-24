@@ -76,8 +76,8 @@ multiple `counters_event_count` measurements. Its main accessors are:
 - `counters_event_aggregate_branches(agg)`: mean branches
 - `counters_event_aggregate_branch_misses(agg)`: mean branch misses
 - `counters_event_aggregate_cache_misses(agg)`: mean cache misses (LLC misses on
-  Linux; L2 data misses on Apple Silicon, since no off-cluster LLC is exposed
-  to kperf)
+  Linux; L2 data misses on M1/M2/M3, L1 data-load misses on M4 and later, since
+  no off-cluster LLC is exposed to kperf)
 - `counters_event_aggregate_fastest_elapsed_ns(agg)`: best (minimum) elapsed time
 - `counters_event_aggregate_fastest_cycles(agg)`: best cycles
 - `counters_event_aggregate_fastest_instructions(agg)`: best instructions
